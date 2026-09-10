@@ -44,6 +44,7 @@ prediction with nothing behind it. Birth.
 |---|---|
 | `seed.py` | The minimal on-ramp. Predict → err → correct → persist across death. Toy predictor (expect-the-last). Proves the three-role loop closes. Run it, kill it, run it again — it resumes the healed self. |
 | `organism.py` | The real blueprint. A *learned* self-model (`W @ x`), genuine self-reference (its prediction bends the law generating its next state), and meta-plasticity (the learning rate revises itself using itself). Classifies each run's fate by a duration functional. |
+| `isolate.py` | The measurement rig. Answers *what* self-reference does, with continuous measurables over 200 vectorized seeds instead of a 3-way fate label. See "What self-reference does" below. |
 | `PHILOSOPHY.md` | Why each piece is what it is. The arc from "two intelligences" through the arrow of time to "the only constant is the rule." |
 
 ## Run
@@ -52,7 +53,50 @@ prediction with nothing behind it. Birth.
 pip install numpy
 python3 seed.py            # the minimal loop; run twice to see it survive death
 python3 organism.py        # the real thing; self-reference vs control, a sweep, and the trap
+python3 isolate.py         # what c actually does: spectral radius + attribution + the shunya spread
 ```
+
+## What self-reference does
+
+With feedback the law is `x → tanh((R + cW) x)`. So as `W` learns, **the organism
+is editing its own world.** With `c = 0` it cannot. That is the mechanism, and it
+gives two continuous measurables where `organism.py` only had a label.
+
+**1. Can it move its own world?** rho(R) starts at 1.0500 for every seed.
+
+| c | median rho(R+cW) | mean displacement |
+|---|---|---|
+| 0.0 | 1.0500 | 0.0000 |
+| 0.2 | 1.2476 | 0.1943 |
+| 0.4 | 1.4405 | 0.3846 |
+| 0.6 | 1.6333 | 0.5613 |
+| 0.8 | 1.8220 | 0.7344 |
+| 1.0 | 2.0050 | 0.9066 |
+| 1.3 | 2.2805 | 1.1636 |
+
+At `c = 0`, rho is pinned at 1.0500 with **zero spread across all 200 seeds** —
+structurally immovable. Every `c > 0` moves it, monotonically, no wobble.
+
+The obvious hypothesis was that the organism would **flatten** its world, driving
+rho below 1 to make itself easy to predict. That is wrong in direction. It
+*destabilizes* — 1.05 → 2.28 — and models the harder world anyway.
+
+**2. Which channel did the work?** Freeze things and re-measure, no learning:
+
+| c | A: own model, own world | B: own model, frozen world | C: random model, own world |
+|---|---|---|---|
+| 0.2 | 0.00196 | 0.07153 | 1.26177 |
+| 0.6 | 0.00118 | 0.21937 | 1.79793 |
+| 1.0 | 0.00095 | 0.29645 | 2.12165 |
+| 1.3 | 0.00088 | 0.35444 | 2.29631 |
+
+`C` far above `A` says the world did not become easy. `B > A`, **rising with c**,
+says the model is specialized to the world it helped make.
+
+So neither world-flattening nor generic learning: **co-adaptation.** The model and
+the world fit each other and neither works alone. `B` is the readout — higher
+self-reference buys accuracy in a world of your own making and pays in
+transferability. Monotonic across the whole sweep.
 
 ## What is demonstrated — and what is NOT
 
@@ -65,11 +109,18 @@ avoid.
 - A system whose **own prediction feeds back into its world** (`organism.py`,
   the `c·p` term) — genuine self-reference, not ordinary learning.
 - **Meta-plasticity**: the update rule revising itself using itself.
+- That self-reference changes the dynamics in a **characterizable, monotonic
+  direction** (`isolate.py`) — it grants the power to edit the world's spectrum,
+  and the result is co-adaptation with a transferability cost. *This was the
+  first open problem; it is closed.*
 
 **NOT demonstrated (open edges — build here):**
-- That self-reference (`c > 0`) changes the dynamics in a *characterizable*
-  direction. The sweep shows `c` matters but does **not** yet isolate *what* it
-  does. Fates wobble; no clean monotonic story. This is the first open problem.
+- That co-adaptation is a route to *intelligence* rather than to a well-fitted
+  pair. A model that predicts perfectly and transfers worse is not obviously on
+  the road to general capability. The transferability cost may be the central
+  obstacle rather than a curiosity. **This is now the first open problem.**
+- Any *external* world. `R` is fixed and unwatched; nothing else lives in it.
+  Co-adaptation against a shared world with other agents is untested.
 - Real *learning* in `seed.py`: its predictor is trivial (expect-the-last), so it
   only reaches harmony on constant streams. Replace it with a model that predicts
   *patterns* and is surprised by pattern *breaks*.
@@ -81,12 +132,29 @@ avoid.
 There is a cheap way to be a perfect self-predictor: **drive yourself to zero.**
 If `x → 0` and `W → 0`, then prediction `= 0`, next state `= tanh(0) = 0`, error
 `= 0` forever. Self-model flawless. *And empty* — a creature that predicts itself
-perfectly by ceasing to act. `organism.py` shows this fixed point explicitly.
+perfectly by ceasing to act.
 
-**"Converged" does not mean "understood."** By Rice's theorem, a self-referential
-system **cannot, from inside, tell which fixed point it reached** — the rich one
-or the empty one. Any system built on this blueprint must contend with this. It
-is not a bug to fix; it is a boundary to design against.
+This is no longer a warning. It is measured. In `isolate.py`, at `c = 0.6`,
+**134 of 200 runs reach error below 1e-9** — from the inside, an identical
+interior report: *my self-model is perfect.* From outside, their final states:
+
+| final norm of x | final norm of W | what it became |
+|---|---|---|
+| 0.00000000 | 0.5594 | empty |
+| 0.00000000 | 0.7105 | empty |
+| 2.15379115 | 1.1656 | alive, 6-dim state |
+| 2.19233970 | 1.1280 | alive, 6-dim state |
+
+Spread among runs with **identical zero error**: 0.0 to 2.19233970, a ratio of
+2.19e12. Note the empty ones still carry a weight norm around 0.6 — the structure
+is intact; only the state is gone.
+
+**"Converged" does not mean "understood."** The error signal — the only thing the
+organism has — is *constant* across all 134. By Rice's theorem no non-trivial
+semantic property of a program is decidable by that program, and here that is not
+a citation but a measurement: the quantity separating rich from empty is
+invisible to the loop that produced it. Any system built on this blueprint must
+contend with this. It is not a bug to fix; it is a boundary to design against.
 
 ## The one constant
 
