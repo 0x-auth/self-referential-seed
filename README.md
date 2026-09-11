@@ -46,6 +46,7 @@ prediction with nothing behind it. Birth.
 | `organism.py` | The real blueprint. A *learned* self-model (`W @ x`), genuine self-reference (its prediction bends the law generating its next state), and meta-plasticity (the learning rate revises itself using itself). Classifies each run's fate by a duration functional. |
 | `isolate.py` | The measurement rig. Answers *what* self-reference does, with continuous measurables over 200 vectorized seeds instead of a 3-way fate label. See "What self-reference does" below. |
 | `duo.py` | Two agents, one shared world, each other's prediction in each other's law. Asks whether an *other* closes the shunya trap. See "Can two vanish?" below. |
+| `duo_order.py` | The same duo rig, scored by **movement** instead of magnitude. `duo.py` only detects `x → 0`; this detects *parked* — a big state that stopped changing. See "Collapse was not the whole story" below. |
 | `PHILOSOPHY.md` | Why each piece is what it is. The arc from "two intelligences" through the arrow of time to "the only constant is the rule." |
 
 ## Run
@@ -56,6 +57,7 @@ python3 seed.py            # the minimal loop; run twice to see it survive death
 python3 organism.py        # the real thing; self-reference vs control, a sweep, and the trap
 python3 isolate.py         # what c actually does: spectral radius + attribution + the shunya spread
 python3 duo.py             # two agents in one world; solo vs clone-duo vs different-duo
+python3 duo_order.py       # the same rig scored by ORDER: does an other keep the state moving?
 ```
 
 ## What self-reference does
@@ -134,6 +136,46 @@ for the romantic reading, `|W_A - W_B|` holds steady near 0.70 — they never me
 They reach a joint fixed point *while remaining different*. Difference shrinks the
 empty basin; it does not abolish settling.
 
+## Collapse was not the whole story
+
+`duo.py` scores death as `|x| < 1e-6` — the state went to zero. But that only
+catches one way to stop. A system parked at a **large** fixed point, nothing
+moving, scores fine on `|x|` and is just as dead.
+
+`duo_order.py` scores **ORDER** instead: mean per-step displacement over the
+second half of the run, normalised by the system's own scale. Collapsed and
+parked both score ~0; only genuine movement scores high. Streaming, O(1) in
+steps — 200 seeds x 40000 steps stores 400 floats, not 384 MB.
+
+**The old measure was undercounting by ~5x.**
+
+| c | solo collapsed | solo frozen | different collapsed | different frozen |
+|---|---|---|---|---|
+| 0.4 | 7.5% | 34.0% | 6.5% | 31.0% |
+| 0.6 | 7.0% | 35.0% | 8.0% | 34.5% |
+| 0.8 | 6.0% | 36.5% | 7.0% | 34.5% |
+| 1.0 | 2.5% | 35.5% | 4.5% | 35.0% |
+
+Roughly a third of every condition is frozen, against 2–8% collapsed. Runs
+counted as healthy by `duo.py` had in fact stopped — they just stopped
+somewhere other than the origin.
+
+**And difference does not rescue it.** Fisher exact, solo vs different, frozen
+as the outcome:
+
+| c | solo frozen | different frozen | odds ratio | p |
+|---|---|---|---|---|
+| 0.4 | 68/200 | 62/200 | 1.147 | 0.594 |
+| 0.6 | 70/200 | 69/200 | 1.022 | 1.000 |
+| 0.8 | 73/200 | 69/200 | 1.091 | 0.754 |
+| 1.0 | 71/200 | 70/200 | 1.022 | 1.000 |
+
+Nothing, at any coupling. Compare the same comparison scored by collapse:
+p = 0.0004, a 2.28x reduction. **So an other protects the magnitude and not
+the arrow.** It keeps you from vanishing; it does not keep you moving. The
+open problem below is not narrowed by this result — it is sharpened, because
+the failure mode is now measured rather than assumed.
+
 ## What is demonstrated — and what is NOT
 
 Honesty is the point of this repo. Overclaiming is the failure mode it exists to
@@ -151,6 +193,10 @@ avoid.
 - That a **different** other reduces collapse into the empty fixed point by 2.28x
   (p = 0.0004), while an identical other does nothing at all (`duo.py`). The
   rescue comes from difference, not from number.
+- That this rescue is **specific to magnitude, not to motion** (`duo_order.py`).
+  Scored by whether the state still moves, ~35% of runs are frozen against 2–8%
+  collapsed, and a different other changes that not at all (p = 0.59–1.00 across
+  every coupling). The old measure was undercounting stopped systems ~5x.
 
 **NOT demonstrated (open edges — build here):**
 - That co-adaptation is a route to *intelligence* rather than to a well-fitted
@@ -159,7 +205,9 @@ avoid.
   obstacle rather than a curiosity. **This is the first open problem.**
 - **Anything that keeps the arrow of time from terminating.** Two different agents
   still co-settle to ~1e-16. If nonzero error is the arrow, nothing here sustains
-  it. Candidates untried: many agents, asymmetric plasticity, an agent whose
+  it. `duo_order.py` makes this sharper and worse: scored by movement rather than
+  magnitude, an other has *no measurable effect at all* on whether the system
+  stops. Candidates untried: many agents, asymmetric plasticity, an agent whose
   objective is the *other's* surprise, a world with its own drive.
 - Real *learning* in `seed.py`: its predictor is trivial (expect-the-last), so it
   only reaches harmony on constant streams. Replace it with a model that predicts
