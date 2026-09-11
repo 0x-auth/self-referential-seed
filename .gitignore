@@ -1,0 +1,13 @@
+# ====================================================================
+# Project-Specific Exclusions (self-referential-seed)
+# ====================================================================
+
+# Local Runtime Data & Anomalies
+*.log
+*.sqlite
+*.tmp
+outputs/
+data_dumps/
+
+# Project Specific Sandbox Exclusions
+# (Add any specific test files or unique artifact extensions here)
