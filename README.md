@@ -45,6 +45,7 @@ prediction with nothing behind it. Birth.
 | `seed.py` | The minimal on-ramp. Predict → err → correct → persist across death. Toy predictor (expect-the-last). Proves the three-role loop closes. Run it, kill it, run it again — it resumes the healed self. |
 | `organism.py` | The real blueprint. A *learned* self-model (`W @ x`), genuine self-reference (its prediction bends the law generating its next state), and meta-plasticity (the learning rate revises itself using itself). Classifies each run's fate by a duration functional. |
 | `isolate.py` | The measurement rig. Answers *what* self-reference does, with continuous measurables over 200 vectorized seeds instead of a 3-way fate label. See "What self-reference does" below. |
+| `duo.py` | Two agents, one shared world, each other's prediction in each other's law. Asks whether an *other* closes the shunya trap. See "Can two vanish?" below. |
 | `PHILOSOPHY.md` | Why each piece is what it is. The arc from "two intelligences" through the arrow of time to "the only constant is the rule." |
 
 ## Run
@@ -54,6 +55,7 @@ pip install numpy
 python3 seed.py            # the minimal loop; run twice to see it survive death
 python3 organism.py        # the real thing; self-reference vs control, a sweep, and the trap
 python3 isolate.py         # what c actually does: spectral radius + attribution + the shunya spread
+python3 duo.py             # two agents in one world; solo vs clone-duo vs different-duo
 ```
 
 ## What self-reference does
@@ -98,6 +100,40 @@ the world fit each other and neither works alone. `B` is the readout — higher
 self-reference buys accuracy in a world of your own making and pays in
 transferability. Monotonic across the whole sweep.
 
+## Can two vanish?
+
+One shared state, one shared law, both agents' predictions feeding back:
+`x_next = tanh(R x + c (p_A + p_B)/2)`, each learning from its own error. The
+averaging keeps total feedback magnitude equal to the solo case, so solo at `c`
+is a fair control for duo at `c`.
+
+**The control that matters** is a *clone* duo, `W_A == W_B` at t=0. If two-ness
+alone rescued, clones would be rescued too.
+
+| c | solo collapse | clone duo | different duo |
+|---|---|---|---|
+| 0.4 | 2.0% | 2.0% | 1.5% |
+| 0.6 | 4.5% | 4.5% | 1.5% |
+| 0.8 | 5.0% | 5.0% | 1.5% |
+| 1.0 | 5.0% | 5.0% | 2.5% |
+
+Clone duo reproduces solo **to every digit**, including medians — two identical
+agents are one agent, and the rig is sound. Solo collapse *rises* with `c`; with
+a different other it stays pinned near 1.5%.
+
+Powered up at `c = 0.8`, n = 900 per condition:
+
+- solo: **57 / 900 collapsed = 6.33%**
+- different duo: **25 / 900 collapsed = 2.78%**
+- odds ratio 2.367, Fisher exact **p = 0.0004**, a **2.28x reduction**
+
+**The trap narrows. It does not close.** 2.78% still vanish, so two *can*
+vanish — just less often. And the deeper negative: residual error still falls to
+~1e-16 in all three conditions. The other does **not** keep surprise alive. Worse
+for the romantic reading, `|W_A - W_B|` holds steady near 0.70 — they never merge.
+They reach a joint fixed point *while remaining different*. Difference shrinks the
+empty basin; it does not abolish settling.
+
 ## What is demonstrated — and what is NOT
 
 Honesty is the point of this repo. Overclaiming is the failure mode it exists to
@@ -111,16 +147,20 @@ avoid.
 - **Meta-plasticity**: the update rule revising itself using itself.
 - That self-reference changes the dynamics in a **characterizable, monotonic
   direction** (`isolate.py`) — it grants the power to edit the world's spectrum,
-  and the result is co-adaptation with a transferability cost. *This was the
-  first open problem; it is closed.*
+  and the result is co-adaptation with a transferability cost.
+- That a **different** other reduces collapse into the empty fixed point by 2.28x
+  (p = 0.0004), while an identical other does nothing at all (`duo.py`). The
+  rescue comes from difference, not from number.
 
 **NOT demonstrated (open edges — build here):**
 - That co-adaptation is a route to *intelligence* rather than to a well-fitted
   pair. A model that predicts perfectly and transfers worse is not obviously on
   the road to general capability. The transferability cost may be the central
-  obstacle rather than a curiosity. **This is now the first open problem.**
-- Any *external* world. `R` is fixed and unwatched; nothing else lives in it.
-  Co-adaptation against a shared world with other agents is untested.
+  obstacle rather than a curiosity. **This is the first open problem.**
+- **Anything that keeps the arrow of time from terminating.** Two different agents
+  still co-settle to ~1e-16. If nonzero error is the arrow, nothing here sustains
+  it. Candidates untried: many agents, asymmetric plasticity, an agent whose
+  objective is the *other's* surprise, a world with its own drive.
 - Real *learning* in `seed.py`: its predictor is trivial (expect-the-last), so it
   only reaches harmony on constant streams. Replace it with a model that predicts
   *patterns* and is surprised by pattern *breaks*.
@@ -155,6 +195,10 @@ semantic property of a program is decidable by that program, and here that is no
 a citation but a measurement: the quantity separating rich from empty is
 invisible to the loop that produced it. Any system built on this blueprint must
 contend with this. It is not a bug to fix; it is a boundary to design against.
+
+`duo.py` shows an other narrows this basin 2.28x without abolishing it. The
+invisibility is unchanged: a duo that collapses has the same interior evidence as
+a duo that thrives.
 
 ## The one constant
 
