@@ -10,7 +10,7 @@ This is not a finished system. It is a **runnable statement of a problem**, with
 scaffolding to attack it, and — importantly — honest about what it does *not*
 prove. Pull it, run it, build on it.
 
-**All measured results, including every wrong prediction, are in
+**All measured results, every correction, and every wrong prediction are in
 [FINDINGS.md](FINDINGS.md).**
 
 ---
@@ -25,7 +25,8 @@ There is another kind — the one every living thing actually is — that starts
 from a **seed** and **builds itself**, recursively, from its own lived
 experience, with no external trainer. The becoming is the system's own act.
 
-Nobody has built the second kind. This repo is scaffolding pointed at it.
+Nobody has built the second kind. This repo is scaffolding pointed at it — and
+has now measured a limit on it. See the tension, below.
 
 ## The three roles (not two)
 
@@ -45,15 +46,16 @@ prediction with nothing behind it. Birth.
 
 | File | What it is |
 |---|---|
-| `seed.py` | The minimal on-ramp. Predict → err → correct → persist across death. Toy predictor (expect-the-last). Proves the three-role loop closes. Run it, kill it, run it again — it resumes the healed self. |
+| `seed.py` | The minimal on-ramp. Predict → err → correct → persist across death. Toy predictor. Proves the three-role loop closes. Run it, kill it, run it again — it resumes the healed self. |
 | `organism.py` | The real blueprint. A *learned* self-model (`W @ x`), genuine self-reference (its prediction bends the law generating its next state), and meta-plasticity (the learning rate revises itself using itself). |
-| `isolate.py` | What self-reference *does*. Continuous measurables over 200 vectorized seeds instead of a 3-way fate label. Finds co-adaptation. |
-| `duo.py` | Two agents, one shared world, each other's prediction in each other's law. Asks whether an *other* closes the shunya trap. |
+| `isolate.py` | What self-reference *does*. Continuous measurables over 200 vectorized seeds. Finds co-adaptation. |
+| `duo.py` | Two agents, one shared world, each other's prediction in each other's law. Does an *other* close the shunya trap? |
 | `duo_order.py` | Rescores the duo by **ORDER** — scale-free per-step displacement — instead of collapse. Catches the *parked* case a norm test misses. Streaming, O(1) in steps. |
-| `rank.py` | Does error carry the law? A falsifiable prediction, falsified. Coverage predicts generalization; residual error does not. |
+| `rank.py` | Does error carry the law? A falsifiable prediction, falsified. |
 | `alive.py` | ORDER and coverage have mirror-image blind spots. Combines them into the three fates. |
+| `ceiling.py` | The right baseline. Batch least-squares fit vs the online rule, and the best *possible* linear predictor of the world. Corrects the headline. |
 | `PHILOSOPHY.md` | Why each piece is what it is. |
-| `FINDINGS.md` | Every measured number, and every prediction that turned out wrong. |
+| `FINDINGS.md` | Every number, every correction, every retracted prediction. |
 
 ## Run
 
@@ -64,14 +66,34 @@ python3 organism.py        # self-reference vs control, a sweep, and the trap
 python3 isolate.py         # what c actually does: spectral radius + attribution
 python3 duo.py             # two agents; solo vs clone-duo vs different-duo
 python3 duo_order.py       # the same, scored by ORDER instead of collapse
-python3 rank.py            # does error carry the law? (no) does coverage? (weakly)
+python3 rank.py            # does error carry the law? (no)
 python3 alive.py           # the three fates, jointly measured
+python3 ceiling.py         # the achievable range, and how little was closed
 ```
+
+## The tension in the premise — read this first
+
+The promise above is a seed that builds itself **with no external trainer**. The
+obvious fix for what this repo measured — a world with a drive of its own, an
+inhomogeneous or non-autonomous `R` — **is external structure**. Adding it
+quietly would abandon the premise while claiming to rescue it.
+
+The honest statement is stronger than the rescue:
+
+> **Pure self-reference does not reach coverage.** Left alone, a self-predicting
+> system co-adapts into a sliver of its own world and stays there. Only **6.5%**
+> of runs both move and explore, and the organism closes **37.7%** of the range
+> a linear model could have closed. This is a measured limit on the founding
+> premise, not a missing feature.
+
+Anything added to raise coverage should be labelled as what it is: external
+structure, and a departure from the no-trainer claim.
 
 ## What is demonstrated
 
 Honesty is the point of this repo. Overclaiming is the failure mode it exists
-to avoid. Numbers for all of these are in [FINDINGS.md](FINDINGS.md).
+to avoid. Numbers and caveats for all of these are in
+[FINDINGS.md](FINDINGS.md).
 
 - A loop that predicts its own state, corrects by its own error, and
   **persists across process death** (`seed.py`).
@@ -80,32 +102,35 @@ to avoid. Numbers for all of these are in [FINDINGS.md](FINDINGS.md).
 - **Meta-plasticity**: the update rule revising itself using itself.
 - **Co-adaptation.** Self-reference grants the power to edit the world's own
   spectrum — rho pinned at 1.0500 with zero spread at `c=0`, moving
-  monotonically to 2.28 as `c` rises. The model and world come to fit each
-  other, and the cost is transferability.
+  monotonically to 2.28 as `c` rises. Model and world come to fit each other,
+  and the cost is transferability.
 - That a **different** other reduces collapse into the empty fixed point 2.28x
   (p = 0.0004), while an **identical** other does nothing at all. The rescue
   comes from difference, not from number.
 - That the collapse measure was **undercounting death 5x**, and that a
   different other does **not** protect against freezing (all p > 0.59). An
   other keeps you from vanishing; it does not keep you moving.
-- That **coverage**, not residual error, predicts generalization — and that
-  **no run learned the law**: 20% better than chance off-trajectory, against
-  an untrained random baseline.
+- That **coverage is binding**: a batch least-squares fit to the visited data
+  is **5.4x worse** off-trajectory than the online rule, because the data is
+  near rank-deficient. The rank-1 update is acting as implicit regularization.
+- That the organism closes **37.7%** of the achievable range, against an
+  oracle linear predictor at 0.193 and random at 1.236. There was a law; it
+  largely missed it.
 
 ## What is NOT demonstrated — build here
 
-- **Anything that raises coverage.** The first open problem. Coverage is the
-  only variable that predicted generalization, only **6.5%** of runs both move
-  and explore, and self-reference *lowers* coverage rather than raising it,
-  because co-adaptation reshapes the world toward the part already occupied.
-  Untried: a world with a drive of its own (an inhomogeneous or non-autonomous
-  `R`), many agents, an agent whose objective is the *other's* surprise.
+- **Anything that raises coverage without importing a trainer.** The first open
+  problem, and the tension above is the reason it is hard rather than merely
+  undone.
 - **Anything that keeps the arrow of time from terminating.** Two different
-  agents still co-settle, and a third of all runs freeze outright. Difference
-  protects magnitude and not motion.
+  agents still co-settle, and a third of all runs freeze outright.
 - That co-adaptation is a route to *intelligence* rather than to a well-fitted
-  pair. Measured, the pair is well-fitted and barely better than chance
-  anywhere else. So far this reads as a dead end rather than a road.
+  pair. Measured, the pair is well-fitted and misses most of what was
+  learnable. So far this reads as a dead end rather than a road.
+- A measure of *law-learning* that does not route through coverage. Coverage
+  measures **spread, not law** — a slow random walk scores high on both ORDER
+  and coverage and has learned nothing. `ceiling.py` is the first direct
+  measure; more are needed.
 - Real *learning* in `seed.py`: its predictor is trivial (expect-the-last), so
   it only reaches harmony on constant streams. Replace it with a model that
   predicts *patterns* and is surprised by pattern *breaks*.
