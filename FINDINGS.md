@@ -177,6 +177,41 @@ separating rich from empty is invisible to the loop that produced it.
 
 ---
 
+## Which sector each fate lives in
+
+`sector.py`. Hypothesis from [darmiyan-fs](https://github.com/0x-auth/darmiyan-fs):
+the fates are the three Möbius/Lorentz sectors, with frozen = hyperbolic
+(attracting) and exploring = elliptic (neutral). `c = 0.6`, 200 seeds,
+`alive.py`'s own classifier (71 frozen, 116 cycling, 13 exploring).
+
+| fate | A: λ1, W fixed | neutral | B: λ1, learning on | neutral | C: gap ‖W − (R+cW)‖ / ‖R+cW‖ |
+|---|---|---|---|---|---|
+| frozen | -0.492 | 0% | -0.0038 | 86% | 0.799 |
+| cycling | -0.223 | 32% | -0.0035 | 96% | 0.659 |
+| exploring | -0.005 | 54% | -0.0006 | 92% | **0.483** |
+
+Exploring vs frozen: A p = 1.2e-6, B p = 8.0e-8, C p = 1.7e-8.
+Exploring vs cycling: A p = 0.11, B p = 0.013, C p = 5.5e-5.
+
+- **A holds, with a qualifier.** In state space, exploring runs sit near the
+  unit circle (leading eigenvalue 0.989) and frozen runs are strongly
+  attracting (0.61). Neutral vs attracting separates them.
+- **B weakens A.** With learning included, almost everything looks neutral,
+  frozen runs too. Once error reaches zero, `W` stops moving, so any nudge to
+  `W` persists: the model space has flat directions. Exploring is still
+  closest to zero, but the effect is small. A is only valid as "neutrality of
+  the state dynamics".
+- **C is the strongest result.** The runs that explore are the ones whose
+  self-model is closest to the law they actually live in, and it is the only
+  measure that also separates exploring from cycling. The gap never reaches
+  zero: the organism that stays open sees its world best, never completely.
+- Not separating: complex vs real leading eigenvalue (46-59% complex in every
+  fate). Rotation-like direction is not the marker; the magnitude is.
+
+One population, n = 13 exploring. Correlation, not cause.
+
+---
+
 ## A record of wrong predictions
 
 Kept deliberately. A retracted claim is worth more than a quiet deletion.
@@ -192,3 +227,5 @@ Kept deliberately. A retracted claim is worth more than a quiet deletion.
 | coverage is the first open problem | true in the unsettled subgroup; the pooled result fails Bonferroni |
 | batch fit would match or beat the online rule | 5.4x worse — the online rule is implicitly regularizing |
 | "20% better than random" was the right framing | wrong baseline; 37.7% of the achievable range |
+| exploring runs have complex leading eigenvalues (rotation-like) | 46-59% complex in every fate; magnitude separates, direction does not |
+| neutral stability (λ1 ≈ 0) marks exploration in the full organism | with learning on, 86% of frozen runs are neutral too; holds only for the state dynamics |

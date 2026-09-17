@@ -54,6 +54,7 @@ prediction with nothing behind it. Birth.
 | `rank.py` | Does error carry the law? A falsifiable prediction, falsified. |
 | `alive.py` | ORDER and coverage have mirror-image blind spots. Combines them into the three fates. |
 | `ceiling.py` | The right baseline. Batch least-squares fit vs the online rule, and the best *possible* linear predictor of the world. Corrects the headline. |
+| `sector.py` | Which Lorentz sector each fate lives in. Exploring runs sit nearest neutral stability, and carry the self-model closest to the law they live in. Pairs with [darmiyan-fs](https://github.com/0x-auth/darmiyan-fs). |
 | `PHILOSOPHY.md` | Why each piece is what it is. |
 | `FINDINGS.md` | Every number, every correction, every retracted prediction. |
 
